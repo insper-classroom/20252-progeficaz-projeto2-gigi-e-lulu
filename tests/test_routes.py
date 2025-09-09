@@ -1,51 +1,141 @@
 import pytest
-from app import create_app
-from app.models import Imovel
-from app import db
-import json 
+from unittest.mock import patch, MagicMock
+from server import app
 
-# com quem os testes serão realizados
-@pytest.fixture
+@pytest.fixture()
 def client(): 
-    app = create_app(testing=True)
-    with app.test_client() as client:
-        yield client
+    app.config['TESTING'] = True
+    return app.test_client()
 
-# lista imóveis - funcional
-def test_listar_imoveis_retorna_json(client):
-    response = client.get("/imoveis")
+# -------------------------------------------------------------------------------------------------------
+# teste conexão
+def test_index(client):
+    reponse = client.get('/')
     assert response.status_code == 200
-    assert response.is_json
+    assert response.get_json() == {'mensagem': 'Conexao bem sucedida'}
 
-# lista imóveis - não funcional
-def test_listar_imoveis_contem_atributos(client):
-    response = client.get("/imoveis")
-    data = response.get_json()
+# -------------------------------------------------------------------------------------------------------
+# Listar todos os imóveis 
+def test_listar_imoveis(mock_db, client):
+    mock_conn = MagicMock()
+    mock_cursor = MagicMock()
+    mock_conn.cursor.return_value = mock_cursor
+    mock_cursor.fetchall.return_value = [{'id': 1, 'cidade': 'São Paulo'}]
+    mock_db.return_value = mock_conn
 
-    assert isinstance(data, list)  
-
-    if data:  
-        imovel = data[0]
-        assert "id" in imovel
-        assert "tipo" in imovel
-        assert "cidade" in imovel
-        assert "preco" in imovel
-
-def test_remover_imovel(test_client, init_database, cleanup_database, imovel_id, expected_status):
-    response = test_client.delete(f'/imoveis/{imovel_id}')
-    assert response.status_code == expected_status
-    if expected_status == 200:
-        assert db.session.get(Imovel, imovel_id) is None
-
-
-def test_listar_imoveis(test_client, init_database, query_param, expected_count):
-    response = test_client.get(f'/imoveis{query_param}')
+    response = client.get(f'/imoveis')
     assert response.status_code == 200
-    data = json.loads(response.data)
-    assert len(data) == expected_count
+    assert response.json == [{'id': 1, 'cidade': 'São Paulo'}]
+    # assert len(data) == expected_count (???)
 
-def test_listar_por_cidade(test_client, init_database, route, query_param, expected_count):
-    response = test_client.get(f'{route}{query_param}')
+# -------------------------------------------------------------------------------------------------------
+# Mostra o imóvel encontrado, via id
+def test_buscar_imovel_encontrado(mock_db, client):
+    mock_conn = MagicMock()
+    mock_cursor = MagicMock()
+    mock_conn.cursor.return_value = mock_cursor
+    mock_cursor.fetchone.return_value = {'id': 1, 'cidade': 'São Paulo'}
+    mock_db.return_value = mock_conn
+
+    response = client.get('/imoveis/1')
     assert response.status_code == 200
-    data = json.loads(response.data)
-    assert len(data) == expected_count
+    assert response.json == {'id': 1, 'cidade': 'São Paulo'}
+
+# -------------------------------------------------------------------------------------------------------
+# Mostra se o imóvel não foi encontrado, via id
+def test_buscar_imovel_nao_encontrado(mock_db, client):
+    mock_conn = MagicMock()
+    mock_cursor = MagicMock()
+    mock_conn.cursor.return_value = mock_cursor
+    mock_cursor.fetchone.return_value = None
+    mock_db.return_value = mock_conn
+
+    resp = client.get('/imoveis/999')
+    assert resp.status_code == 404
+    assert resp.json == {'erro': 'Imóvel não encontrado'}
+
+# -------------------------------------------------------------------------------------------------------
+# Adicionar imóveis
+def test_adicionar_imovel(mock_db, client):
+    mock_conn = MagicMock()
+    mock_cursor = MagicMock()
+    mock_conn.cursor.return_value = mock_cursor
+    mock_db.return_value = mock_conn
+
+    dados = {
+        'logradouro': 'Rua X',
+        'tipo_logradouro': 'Rua',
+        'bairro': 'Ipiranga',
+        'cidade': 'São Paulo',
+        'cep': '04205-002',
+        'tipo': 'casa',
+        'valor': 200000,
+        'data_aquisicao': '2025-05-10'
+    }
+
+    response = client.post('imoveis', json=dados)
+    assert response.status_code == 201
+    assert response.json == {'mensagem': 'Imóvel criado com sucesso'}
+
+# -------------------------------------------------------------------------------------------------------
+# Atualizar imóveis (estrutura parecida, alterando as informações)
+def test_atualizar_imovel(mock_db, client):
+    mock_conn = MagicMock()
+    mock_cursor = MagicMock()
+    mock_conn.cursor.return_value = mock_cursor
+    mock_cursor.fetchone.return_value = {'id': 1, 'cidade': 'São Paulo'}
+    mock_db.return_value = mock_conn
+
+    dados = {
+        'logradouro': 'Rua Nova',
+        'tipo_logradouro': 'Rua',
+        'bairro': 'Bairro Novo',
+        'cidade': 'São Paulo',
+        'cep': '01000-000',
+        'tipo': 'apartamento',
+        'valor': 300000,
+        'data_aquisicao': '2025-06-01'
+    }
+
+    resp = client.put('/imoveis/1', json=dados)
+    assert resp.status_code == 200
+    assert resp.json == {'mensagem': 'Imóvel atualizado com sucesso'}
+
+# -------------------------------------------------------------------------------------------------------
+# Remover imóveis
+def test_remover_imovel(mock_db, client):
+    mock_conn = MagicMock()
+    mock_cursor = MagicMock()
+    mock_cursor.rowcount = 1
+    mock_conn.cursor.return_value = mock_cursor
+    mock_db.return_value = mock_conn
+
+    response = client.delete(f'/imoveis/1')
+    assert response.status_code == 200:
+    assert resp.json == {'mensagem': 'Imóvel removido com sucesso'}
+
+# -------------------------------------------------------------------------------------------------------
+# Listar imóveis por tipo
+def test_listar_por_tipo(mock_db, client):
+    mock_conn = MagicMock()
+    mock_cursor = MagicMock()
+    mock_cursor.fetchall.return_value = [{'id': 1, 'tipo': 'casa'}]
+    mock_conn.cursor.return_value = mock_cursor
+    mock_db.return_value = mock_conn
+
+    resp = client.get('/imoveis/tipo/casa')
+    assert resp.status_code == 200
+    assert resp.json == [{'id': 1, 'tipo': 'casa'}]
+
+# -------------------------------------------------------------------------------------------------------
+# Listar imóveis por cidade
+def test_listar_por_cidade(mock_db, client):
+    mock_conn = MagicMock()
+    mock_cursor = MagicMock()
+    mock_cursor.fetchall.return_value = [{'id': 2, 'cidade': 'Bofete'}]
+    mock_conn.cursor.return_value = mock_cursor
+    mock_db.return_value = mock_conn
+
+    response = client.get('/imoveis/cidade/Bofete')
+    assert response.status_code == 200
+    assert resp.json == [{'id': 2, 'cidade': 'Bofete'}]
