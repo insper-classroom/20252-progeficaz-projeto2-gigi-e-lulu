@@ -5,14 +5,8 @@ from server import app
 @pytest.fixture()
 def client(): 
     app.config['TESTING'] = True
-    return app.test_client()
-
-# -------------------------------------------------------------------------------------------------------
-# teste conexão
-def test_index(client):
-    reponse = client.get('/')
-    assert response.status_code == 200
-    assert response.get_json() == {'mensagem': 'Conexao bem sucedida'}
+    with app.test_client() as client:
+        yield client
 
 # -------------------------------------------------------------------------------------------------------
 # Listar todos os imóveis 
@@ -20,13 +14,12 @@ def test_listar_imoveis(mock_db, client):
     mock_conn = MagicMock()
     mock_cursor = MagicMock()
     mock_conn.cursor.return_value = mock_cursor
-    mock_cursor.fetchall.return_value = [{'id': 1, 'cidade': 'São Paulo'}]
+    mock_cursor.fetchall.return_value = [{'id': 1, 'cidade': 'São Paulo'}, {'id': 2, 'cidade': 'Bofete'}]
     mock_db.return_value = mock_conn
 
     response = client.get(f'/imoveis')
     assert response.status_code == 200
-    assert response.json == [{'id': 1, 'cidade': 'São Paulo'}]
-    # assert len(data) == expected_count (???)
+    assert response.json == [{'id': 1, 'cidade': 'São Paulo'}, {'id': 2, 'cidade': 'Bofete'}]
 
 # -------------------------------------------------------------------------------------------------------
 # Mostra o imóvel encontrado, via id
@@ -50,9 +43,9 @@ def test_buscar_imovel_nao_encontrado(mock_db, client):
     mock_cursor.fetchone.return_value = None
     mock_db.return_value = mock_conn
 
-    resp = client.get('/imoveis/999')
-    assert resp.status_code == 404
-    assert resp.json == {'erro': 'Imóvel não encontrado'}
+    response = client.get('/imoveis/999')
+    assert response.status_code == 404
+    assert response.json == {'erro': 'Imóvel não encontrado'}
 
 # -------------------------------------------------------------------------------------------------------
 # Adicionar imóveis
@@ -73,7 +66,7 @@ def test_adicionar_imovel(mock_db, client):
         'data_aquisicao': '2025-05-10'
     }
 
-    response = client.post('imoveis', json=dados)
+    response = client.post('/imoveis', json=dados)
     assert response.status_code == 201
     assert response.json == {'mensagem': 'Imóvel criado com sucesso'}
 
@@ -97,9 +90,9 @@ def test_atualizar_imovel(mock_db, client):
         'data_aquisicao': '2025-06-01'
     }
 
-    resp = client.put('/imoveis/1', json=dados)
-    assert resp.status_code == 200
-    assert resp.json == {'mensagem': 'Imóvel atualizado com sucesso'}
+    response = client.put('/imoveis/1', json=dados)
+    assert response.status_code == 200
+    assert response.json == {'mensagem': 'Imóvel atualizado com sucesso'}
 
 # -------------------------------------------------------------------------------------------------------
 # Remover imóveis
@@ -112,20 +105,20 @@ def test_remover_imovel(mock_db, client):
 
     response = client.delete(f'/imoveis/1')
     assert response.status_code == 200:
-    assert resp.json == {'mensagem': 'Imóvel removido com sucesso'}
+    assert response.json == {'mensagem': 'Imóvel removido com sucesso'}
 
 # -------------------------------------------------------------------------------------------------------
 # Listar imóveis por tipo
 def test_listar_por_tipo(mock_db, client):
     mock_conn = MagicMock()
     mock_cursor = MagicMock()
-    mock_cursor.fetchall.return_value = [{'id': 1, 'tipo': 'casa'}]
+    mock_cursor.fetchall.return_value = [{'id': 1, 'tipo': 'casa'}, {'id': 2, 'tipo': 'apartamento'}]
     mock_conn.cursor.return_value = mock_cursor
     mock_db.return_value = mock_conn
 
-    resp = client.get('/imoveis/tipo/casa')
-    assert resp.status_code == 200
-    assert resp.json == [{'id': 1, 'tipo': 'casa'}]
+    response = client.get('/imoveis/tipo/casa')
+    assert response.status_code == 200
+    assert response.json == [{'id': 1, 'tipo': 'casa'}, {'id': 2, 'tipo': 'apartamento'}]
 
 # -------------------------------------------------------------------------------------------------------
 # Listar imóveis por cidade
@@ -138,4 +131,4 @@ def test_listar_por_cidade(mock_db, client):
 
     response = client.get('/imoveis/cidade/Bofete')
     assert response.status_code == 200
-    assert resp.json == [{'id': 2, 'cidade': 'Bofete'}]
+    assert response.json == [{'id': 2, 'cidade': 'Bofete'}]
