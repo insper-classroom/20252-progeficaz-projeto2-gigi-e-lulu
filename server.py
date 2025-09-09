@@ -24,26 +24,27 @@ def conectando_db():
 def home():
     return jsonify({"mensagem": "API funcionando!"})
 
-# -------------------------------------------------------------------------------------------------------
-# Listar todos os imóveis
 
 # -------------------------------------------------------------------------------------------------------
-# Listar um imóvel específico, via id
+# Listar todos os imóveis - GET - /imoveis
 
 # -------------------------------------------------------------------------------------------------------
-# Adicionar um novo imóvel
+# Listar um imóvel específico, via id - GET - /imoveis/<id>
 
 # -------------------------------------------------------------------------------------------------------
-# Atualizar um imóvel existente
+# Adicionar um novo imóvel - POST - /imoveis
 
 # -------------------------------------------------------------------------------------------------------
-# Remover um imóvel existente
+# Atualizar um imóvel existente - PUT - /imoveis/<id>
 
 # -------------------------------------------------------------------------------------------------------
-# Listar imóveis por tipo
+# Remover um imóvel existente - DELETE - /imoveis/<id>
 
 # -------------------------------------------------------------------------------------------------------
-# Listar imóveis por cidade 
+# Listar imóveis por tipo - GET - /imoveis/tipo/<tipo>
+
+# -------------------------------------------------------------------------------------------------------
+# Listar imóveis por cidade - GET - /imoveis/cidade/<cidade>
 
 # -------------------------------------------------------------------------------------------------------
 
