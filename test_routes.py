@@ -10,6 +10,7 @@ def client():
 
 # -------------------------------------------------------------------------------------------------------
 # Listar todos os imóveis 
+@patch("server.conectando_db")
 def test_listar_imoveis(mock_db, client):
     mock_conn = MagicMock()
     mock_cursor = MagicMock()
@@ -23,6 +24,7 @@ def test_listar_imoveis(mock_db, client):
 
 # -------------------------------------------------------------------------------------------------------
 # Mostra o imóvel encontrado, via id
+@patch("server.conectando_db")
 def test_buscar_imovel_encontrado(mock_db, client):
     mock_conn = MagicMock()
     mock_cursor = MagicMock()
@@ -36,6 +38,7 @@ def test_buscar_imovel_encontrado(mock_db, client):
 
 # -------------------------------------------------------------------------------------------------------
 # Mostra se o imóvel não foi encontrado, via id
+@patch("server.conectando_db")
 def test_buscar_imovel_nao_encontrado(mock_db, client):
     mock_conn = MagicMock()
     mock_cursor = MagicMock()
@@ -49,6 +52,7 @@ def test_buscar_imovel_nao_encontrado(mock_db, client):
 
 # -------------------------------------------------------------------------------------------------------
 # Adicionar imóveis
+@patch("server.conectando_db")
 def test_adicionar_imovel(mock_db, client):
     mock_conn = MagicMock()
     mock_cursor = MagicMock()
@@ -72,6 +76,7 @@ def test_adicionar_imovel(mock_db, client):
 
 # -------------------------------------------------------------------------------------------------------
 # Atualizar imóveis (estrutura parecida, alterando as informações)
+@patch("server.conectando_db")
 def test_atualizar_imovel(mock_db, client):
     mock_conn = MagicMock()
     mock_cursor = MagicMock()
@@ -96,6 +101,7 @@ def test_atualizar_imovel(mock_db, client):
 
 # -------------------------------------------------------------------------------------------------------
 # Remover imóveis
+@patch("server.conectando_db")
 def test_remover_imovel(mock_db, client):
     mock_conn = MagicMock()
     mock_cursor = MagicMock()
@@ -109,6 +115,7 @@ def test_remover_imovel(mock_db, client):
 
 # -------------------------------------------------------------------------------------------------------
 # Listar imóveis por tipo
+@patch("server.conectando_db")
 def test_listar_por_tipo(mock_db, client):
     mock_conn = MagicMock()
     mock_cursor = MagicMock()
@@ -122,6 +129,7 @@ def test_listar_por_tipo(mock_db, client):
 
 # -------------------------------------------------------------------------------------------------------
 # Listar imóveis por cidade
+@patch("server.conectando_db")
 def test_listar_por_cidade(mock_db, client):
     mock_conn = MagicMock()
     mock_cursor = MagicMock()
