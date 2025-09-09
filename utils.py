@@ -1,3 +1,5 @@
+# CRIAR TODAS AS FUNÇÕES COM "db" NO FINAL PARA DIFERENCIAR DAS DO SERVER.PY, EVITANDO CONFUSÃO !!!!!!!!!!!!
+
 import mysql.connector
 import os
 from dotenv import load_dotenv
