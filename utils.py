@@ -1,7 +1,21 @@
-from flask import Flask, jsonify, request
+import mysql.connector
+import os
+from dotenv import load_dotenv
 
-app = Flask(__name__)
+load_dotenv(override=True)
 
+# Conexão com o banco de dados SQL
+db_config = {
+    "host": os.getenv("HOST"),
+    "port": int(os.getenv("PORT")),
+    "user": os.getenv("USER"),
+    "password": os.getenv("PASSWORD"),
+    "database": os.getenv("DB"),
+    "ssl_ca": "ca.pem"
+}
+
+def conectando_db():
+    return mysql.connector.connect(**db_config)
 
 # -------------------------------------------------------------------------------------------------------
 # Listar todos os imóveis - GET - /imoveis
@@ -25,6 +39,3 @@ app = Flask(__name__)
 # Listar imóveis por cidade - GET - /imoveis/cidade/<cidade>
 
 # -------------------------------------------------------------------------------------------------------
-
-if __name__ == "__main__":
-    app.run(debug=True)
