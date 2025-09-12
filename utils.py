@@ -63,7 +63,7 @@ def adicionar_imovel_db(dados):
 # Remover um imóvel existente - DELETE - /imoveis/<id>
 def remover_imovel_db(id: int) -> bool:
     sql = "DELETE FROM imoveis WHERE id = %s"
-    conn = _get_conn()
+    conn = conectando_db
     try:
         with conn.cursor() as cur:
             cur.execute(sql, (id,))
@@ -73,8 +73,26 @@ def remover_imovel_db(id: int) -> bool:
         conn.close()
 # -------------------------------------------------------------------------------------------------------
 # Listar imóveis por tipo - GET - /imoveis/tipo/<tipo>
-
+def listar_imovel_por_tipo_db(id:int, tipo: str) -> bool:
+    sql = "SELECT * FROM imoveis WHERE tipo = %s"
+    conn = conectando_db
+    try:
+        with conn.cursor() as cur:
+            cur.execute(sql,(id,))
+            conn.commit()
+            return cur.rowcount > 0 
+    finally :
+        conn.close()
 # -------------------------------------------------------------------------------------------------------
 # Listar imóveis por cidade - GET - /imoveis/cidade/<cidade>
-
+def listar_imovel_por_cidade_db(id: int, cidade: str ):
+    sql= "SELECT * FROM imoveis WHERE tipo = %s "
+    conn = conectando_db
+    try:
+        with conn.cursor() as cur :
+            cur.execute(sql,(id, ))
+            conn.commit()
+        return cur.rowcount> 0
+    finally : 
+        conn.close()
 # -------------------------------------------------------------------------------------------------------
