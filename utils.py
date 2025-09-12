@@ -19,6 +19,7 @@ db_config = {
 def conectando_db():
     return mysql.connector.connect(**db_config)
 
+###PRECISAMOS ESTABELECER UM CONN
 # -------------------------------------------------------------------------------------------------------
 # Listar todos os imóveis - GET - /imoveis
 
@@ -33,7 +34,16 @@ def conectando_db():
 
 # -------------------------------------------------------------------------------------------------------
 # Remover um imóvel existente - DELETE - /imoveis/<id>
-
+def remover_imovel_db(id: int) -> bool:
+    sql = "DELETE FROM imoveis WHERE id = %s"
+    conn = _get_conn()
+    try:
+        with conn.cursor() as cur:
+            cur.execute(sql, (id,))
+            conn.commit()
+            return cur.rowcount > 0
+    finally:
+        conn.close()
 # -------------------------------------------------------------------------------------------------------
 # Listar imóveis por tipo - GET - /imoveis/tipo/<tipo>
 

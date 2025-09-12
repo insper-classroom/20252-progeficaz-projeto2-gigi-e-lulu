@@ -34,12 +34,12 @@ def adicionar_imovel():
 # -------------------------------------------------------------------------------------------------------
 # Atualizar um imóvel existente 
 @app.route("/imoveis/<id>", methods=["PUT"])
-def atualizar_imovel()
+def atualizar_imovel():
     dados = request.get_json()
     if not dados:
         return jsonify({"erro": "Dados inválidos"}), 400 # não processa o bad request
 
-    if not db.buscar_imovel_db(id)
+    if not db.buscar_imovel_db(id):
         return jsonify({"erro": "Imóvel não encontrado"}), 404 # página não encontrada
 
     db.atualizar_imovel_db(id, dados)
@@ -47,13 +47,36 @@ def atualizar_imovel()
 
 # -------------------------------------------------------------------------------------------------------
 # Remover um imóvel existente - DELETE - /imoveis/<id>
+@app.route('/imoveis/<id>', methods=['DELETE'])
+def remover_imovel(id):
+    try:
+        if not db.buscar_imovel_db(id):
+            return jsonify({"erro": "Imóvel não encontrado"}), 404
+
+        db.remover_imovel_db(id)
+        return jsonify({"mensagem": "Imóvel removido com sucesso"}), 200
+    except Exception as e:
+        return jsonify({"erro": str(e)}), 500
+
 
 # -------------------------------------------------------------------------------------------------------
 # Listar imóveis por tipo - GET - /imoveis/tipo/<tipo>
-
+@app.route("/imoveis/tipo/<string:tipo>", methods=["GET"])
+def listar_por_tipo(tipo):
+    try:
+        imoveis = db.listar_imoveis_por_tipo_db(tipo)
+        return jsonify(imoveis), 200
+    except Exception as e:
+        return jsonify({"erro": str(e)}), 500
 # -------------------------------------------------------------------------------------------------------
 # Listar imóveis por cidade - GET - /imoveis/cidade/<cidade>
-
+@app.route("/imoveis/cidade/<string:cidade>", methods=["GET"])
+def listar_por_cidade(cidade):
+    try:
+        imoveis = db.listar_imoveis_por_cidade_db(cidade)
+        return jsonify(imoveis), 200
+    except Exception as e:
+        return jsonify({"erro": str(e)}), 500
 # -------------------------------------------------------------------------------------------------------
 
 if __name__ == "__main__":
