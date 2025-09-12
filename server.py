@@ -46,7 +46,7 @@ def atualizar_imovel():
     return jsonify({"mensagem": "Imóvel atualizado com sucesso"}), 200 # solicitação bem sucedida
 
 # -------------------------------------------------------------------------------------------------------
-# Remover um imóvel existente - DELETE - /imoveis/<id>
+# Remover um imóvel existente 
 @app.route('/imoveis/<id>', methods=['DELETE'])
 def remover_imovel(id):
     try:
@@ -60,7 +60,7 @@ def remover_imovel(id):
 
 
 # -------------------------------------------------------------------------------------------------------
-# Listar imóveis por tipo - GET - /imoveis/tipo/<tipo>
+# Listar imóveis por tipo 
 @app.route("/imoveis/tipo/<string:tipo>", methods=["GET"])
 def listar_por_tipo(tipo):
     try:
@@ -69,7 +69,7 @@ def listar_por_tipo(tipo):
     except Exception as e:
         return jsonify({"erro": str(e)}), 500
 # -------------------------------------------------------------------------------------------------------
-# Listar imóveis por cidade - GET - /imoveis/cidade/<cidade>
+# Listar imóveis por cidade 
 @app.route("/imoveis/cidade/<string:cidade>", methods=["GET"])
 def listar_por_cidade(cidade):
     try:

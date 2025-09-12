@@ -21,16 +21,43 @@ def conectando_db():
 
 ###PRECISAMOS ESTABELECER UM CONN
 # -------------------------------------------------------------------------------------------------------
-# Listar todos os imóveis - GET - /imoveis
+# Listar todos os imóveis 
+def listar_imoveis_db(id):
+    conn = conectando_db()
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute("SELECT * FROM imoveis")
+    imoveis = cursor.fetchall()
+    conn.close()
+    return imoveis
+            
+# -------------------------------------------------------------------------------------------------------
+# Listar um imóvel específico, via id 
+def buscar_imovel_db():
+    conn = conectando_db()
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute("SELECT * FROM imoveis WHERE id = %s", (imovel_id,))
+    imovel = cursor.fetchone()
+    conn.close()
+    return imovel
+# -------------------------------------------------------------------------------------------------------
+# Adicionar um novo imóvel 
+def adicionar_imovel_db(dados):
+    conn = conectando_db()
+    cursor = conn.cursor()
+    # %s relacionado a memória que os elementos ocupam
+    cursor.execute("""
+        INSERT INTO imoveis (logradouro, tipo_logradouro, bairro, cidade, cep, tipo, valor, data_aquisicao)
+        VALUES (%s,%s,%s,%s,%s,%s,%s,%s) 
+    """, (
+        dados["logradouro"], dados["tipo_logradouro"], dados["bairro"], 
+        dados["cidade"], dados["cep"], dados["tipo"], 
+        dados["valor"], dados["data_aquisicao"]
+    ))
+    conn.commit()
+    conn.close()
 
 # -------------------------------------------------------------------------------------------------------
-# Listar um imóvel específico, via id - GET - /imoveis/<id>
-
-# -------------------------------------------------------------------------------------------------------
-# Adicionar um novo imóvel - POST - /imoveis
-
-# -------------------------------------------------------------------------------------------------------
-# Atualizar um imóvel existente - PUT - /imoveis/<id>
+# Atualizar um imóvel existente 
 
 # -------------------------------------------------------------------------------------------------------
 # Remover um imóvel existente - DELETE - /imoveis/<id>
