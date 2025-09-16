@@ -86,26 +86,26 @@ def remover_imovel_db(id):
         conn.close()
 # -------------------------------------------------------------------------------------------------------
 # Listar imóveis por tipo
-def listar_imovel_por_tipo_db(tipo):
-    sql = "SELECT * FROM imoveis WHERE tipo = %s"
+def listar_imoveis_por_tipo_db(tipo):
+    sql = "SELECT * FROM imoveis WHERE LOWER(tipo) = LOWER(%s)"
     conn = conectando_db()
     try:
-        with conn.cursor() as cur:
-            cur.execute(sql,(id,))
-            conn.commit()
-            return cur.rowcount > 0 
+        with conn.cursor(dictionary=True) as cur:
+            cur.execute(sql,(tipo,))
+            result = cur.fetchall()
+            return result
     finally :
         conn.close()
 # -------------------------------------------------------------------------------------------------------
 # Listar imóveis por cidade 
-def listar_imovel_por_cidade_db(cidade):
-    sql= "SELECT * FROM imoveis WHERE tipo = %s "
+def listar_imoveis_por_cidade_db(cidade):
+    sql= "SELECT * FROM imoveis WHERE LOWER(cidade) = LOWER(%s) "
     conn = conectando_db()
     try:
-        with conn.cursor() as cur :
-            cur.execute(sql,(id, ))
-            conn.commit()
-        return cur.rowcount> 0
+        with conn.cursor(dictionary=True) as cur:
+            cur.execute(sql,(cidade, ))
+            result = cur.fetchall()
+            return result
     finally : 
         conn.close()
 # -------------------------------------------------------------------------------------------------------

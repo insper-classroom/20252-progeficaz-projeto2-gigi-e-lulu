@@ -33,8 +33,8 @@ def adicionar_imovel():
 
 # -------------------------------------------------------------------------------------------------------
 # Atualizar um imóvel existente 
-@app.route("/imoveis/<id>", methods=["PUT"])
-def atualizar_imovel():
+@app.route("/imoveis/<int:id>", methods=["PUT"])
+def atualizar_imovel(id):
     dados = request.get_json()
     if not dados:
         return jsonify({"erro": "Dados inválidos"}), 400 # não processa o bad request
