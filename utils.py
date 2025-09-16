@@ -61,38 +61,46 @@ def adicionar_imovel_db(dados):
 
 # -------------------------------------------------------------------------------------------------------
 # Remover um imóvel existente
-def remover_imovel_db(id):
-    conn = conectando_db()
+
+
+def remover_imovel_db(id: int) -> bool:
     sql = "DELETE FROM imoveis WHERE id = %s"
+    conn = conectando_db()
     try:
         with conn.cursor() as cur:
             cur.execute(sql, (id,))
-            conn.commit()
-            return cur.rowcount > 0
+        conn.commit()
+        
+        return cur.rowcount > 0
+    except Exception:
+        conn.rollback()
+        raise
     finally:
         conn.close()
+
 # -------------------------------------------------------------------------------------------------------
 # Listar imóveis por tipo
-def listar_imovel_por_tipo_db(tipo):
+def listar_imovel_por_tipo_db(tipo: str):
     sql = "SELECT * FROM imoveis WHERE tipo = %s"
     conn = conectando_db()
     try:
-        with conn.cursor() as cur:
-            cur.execute(sql,(id,))
-            conn.commit()
-            return cur.rowcount > 0 
-    finally :
+        with conn.cursor(dictionary=True) as cur:
+            cur.execute(sql, (tipo,))
+            rows = cur.fetchall()
+            return rows  # [] se nada encontrado
+    finally:
         conn.close()
+
 # -------------------------------------------------------------------------------------------------------
 # Listar imóveis por cidade 
-def listar_imovel_por_cidade_db(cidade):
-    sql= "SELECT * FROM imoveis WHERE tipo = %s "
+def listar_imovel_por_cidade_db(cidade: str):
+    sql = "SELECT * FROM imoveis WHERE cidade = %s"
     conn = conectando_db()
     try:
-        with conn.cursor() as cur :
-            cur.execute(sql,(id, ))
-            conn.commit()
-        return cur.rowcount> 0
-    finally : 
+        with conn.cursor(dictionary=True) as cur:
+            cur.execute(sql, (cidade,))
+            rows = cur.fetchall()
+            return rows  # [] se nada encontrado
+    finally:
         conn.close()
 # -------------------------------------------------------------------------------------------------------
