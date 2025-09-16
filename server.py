@@ -14,8 +14,8 @@ def listar_imoveis():
 
 # -------------------------------------------------------------------------------------------------------
 # Listar um imóvel específico, via id
-@app.route('/imoveis/<id>', methods=['GET'])
-def buscar_imovel():
+@app.route('/imoveis/<int:id>', methods=['GET'])
+def buscar_imovel(id):
     imovel = db.buscar_imovel_db(id)
     if imovel: # se ele for encontrado é True
         return jsonify(imovel), 200 # solicitação bem sucedida
