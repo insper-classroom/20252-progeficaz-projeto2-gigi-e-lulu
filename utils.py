@@ -58,6 +58,19 @@ def adicionar_imovel_db(dados):
 
 # -------------------------------------------------------------------------------------------------------
 # Atualizar um imóvel existente 
+def atualizar_imovel_db(id, dados):
+    conn = conectando_db()
+    cursor = conn.cursor()
+    cursor.execute("""
+        UPDATE imoveis SET logradouro=%s, tipo_logradouro=%s, bairro=%s, cidade=%s,
+        cep=%s, tipo=%s, valor=%s, data_aquisicao=%s WHERE id=%s
+    """, (
+        dados["logradouro"], dados["tipo_logradouro"], dados["bairro"], 
+        dados["cidade"], dados["cep"], dados["tipo"], 
+        dados["valor"], dados["data_aquisicao"], id
+    ))
+    conn.commit()
+    conn.close()
 
 # -------------------------------------------------------------------------------------------------------
 # Remover um imóvel existente
