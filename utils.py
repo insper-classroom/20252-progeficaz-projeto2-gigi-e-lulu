@@ -9,7 +9,7 @@ load_dotenv(override=True)
 # Conexão com o banco de dados SQL
 db_config = {
     "host": os.getenv("HOST"),
-    "port": int(os.getenv("PORT")),
+    "port": int(os.getenv("PORT", 28874)),
     "user": os.getenv("USER"),
     "password": os.getenv("PASSWORD"),
     "database": os.getenv("DB"),
