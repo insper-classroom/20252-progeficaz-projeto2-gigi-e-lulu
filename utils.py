@@ -22,7 +22,7 @@ def conectando_db():
 ###PRECISAMOS ESTABELECER UM CONN
 # -------------------------------------------------------------------------------------------------------
 # Listar todos os imóveis 
-def listar_imoveis_db(id):
+def listar_imoveis_db():
     conn = conectando_db()
     cursor = conn.cursor(dictionary=True)
     cursor.execute("SELECT * FROM imoveis")
@@ -32,10 +32,10 @@ def listar_imoveis_db(id):
             
 # -------------------------------------------------------------------------------------------------------
 # Listar um imóvel específico, via id 
-def buscar_imovel_db():
+def buscar_imovel_db(id):
     conn = conectando_db()
     cursor = conn.cursor(dictionary=True)
-    cursor.execute("SELECT * FROM imoveis WHERE id = %s", (imovel_id,))
+    cursor.execute("SELECT * FROM imoveis WHERE id = %s", (id,))
     imovel = cursor.fetchone()
     conn.close()
     return imovel
@@ -60,10 +60,10 @@ def adicionar_imovel_db(dados):
 # Atualizar um imóvel existente 
 
 # -------------------------------------------------------------------------------------------------------
-# Remover um imóvel existente - DELETE - /imoveis/<id>
-def remover_imovel_db(id: int) -> bool:
+# Remover um imóvel existente
+def remover_imovel_db(id):
+    conn = conectando_db()
     sql = "DELETE FROM imoveis WHERE id = %s"
-    conn = conectando_db
     try:
         with conn.cursor() as cur:
             cur.execute(sql, (id,))
@@ -72,10 +72,10 @@ def remover_imovel_db(id: int) -> bool:
     finally:
         conn.close()
 # -------------------------------------------------------------------------------------------------------
-# Listar imóveis por tipo - GET - /imoveis/tipo/<tipo>
-def listar_imovel_por_tipo_db(id:int, tipo: str) -> bool:
+# Listar imóveis por tipo
+def listar_imovel_por_tipo_db(tipo):
     sql = "SELECT * FROM imoveis WHERE tipo = %s"
-    conn = conectando_db
+    conn = conectando_db()
     try:
         with conn.cursor() as cur:
             cur.execute(sql,(id,))
@@ -84,10 +84,10 @@ def listar_imovel_por_tipo_db(id:int, tipo: str) -> bool:
     finally :
         conn.close()
 # -------------------------------------------------------------------------------------------------------
-# Listar imóveis por cidade - GET - /imoveis/cidade/<cidade>
-def listar_imovel_por_cidade_db(id: int, cidade: str ):
+# Listar imóveis por cidade 
+def listar_imovel_por_cidade_db(cidade):
     sql= "SELECT * FROM imoveis WHERE tipo = %s "
-    conn = conectando_db
+    conn = conectando_db()
     try:
         with conn.cursor() as cur :
             cur.execute(sql,(id, ))

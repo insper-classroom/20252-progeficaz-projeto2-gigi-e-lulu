@@ -14,7 +14,7 @@ def listar_imoveis():
 
 # -------------------------------------------------------------------------------------------------------
 # Listar um imóvel específico, via id
-@app.route('imoveis/<id>', methods=['GET'])
+@app.route('/imoveis/<id>', methods=['GET'])
 def buscar_imovel():
     imovel = db.buscar_imovel_db(id)
     if imovel: # se ele for encontrado é True
