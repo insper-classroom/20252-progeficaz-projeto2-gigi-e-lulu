@@ -74,16 +74,23 @@ def atualizar_imovel_db(id, dados):
 
 # -------------------------------------------------------------------------------------------------------
 # Remover um imóvel existente
-def remover_imovel_db(id):
-    conn = conectando_db()
+
+
+def remover_imovel_db(id: int) -> bool:
     sql = "DELETE FROM imoveis WHERE id = %s"
+    conn = conectando_db()
     try:
         with conn.cursor() as cur:
             cur.execute(sql, (id,))
-            conn.commit()
-            return cur.rowcount > 0
+        conn.commit()
+        
+        return cur.rowcount > 0
+    except Exception:
+        conn.rollback()
+        raise
     finally:
         conn.close()
+
 # -------------------------------------------------------------------------------------------------------
 # Listar imóveis por tipo
 def listar_imoveis_por_tipo_db(tipo):
@@ -96,6 +103,7 @@ def listar_imoveis_por_tipo_db(tipo):
             return result
     finally :
         conn.close()
+
 # -------------------------------------------------------------------------------------------------------
 # Listar imóveis por cidade 
 def listar_imoveis_por_cidade_db(cidade):
